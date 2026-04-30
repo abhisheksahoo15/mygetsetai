@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "NODE_ENV=production node server.mjs",
-    "azure:startup": "npm install && npm run build && npm start",
+    "start": "next build && NODE_ENV=production node server.mjs",
     "lint": "eslint"
   },
   "engines": {
