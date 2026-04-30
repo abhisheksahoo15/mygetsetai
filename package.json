@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/build.mjs",
+    "build": "next build",
     "start": "NODE_ENV=production node server.mjs",
-    "azure:startup": "npm ci && npm run build && npm start",
+    "azure:startup": "npm install && npm run build && npm start",
     "lint": "eslint"
   },
   "engines": {
