@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/build.mjs",
-    "start": "node scripts/build.mjs && NODE_ENV=production node server.mjs",
-    "lint": "eslint"
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "engines": {
     "node": ">=18 <=22"
@@ -15,9 +15,9 @@
     "@supabase/supabase-js": "^2.103.0",
     "framer-motion": "^11.18.0",
     "next": "16.2.3",
-    "razorpay": "^2.9.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "razorpay": "^2.9.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
