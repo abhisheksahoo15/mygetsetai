@@ -1,0 +1,47 @@
+export const courses = [
+  {
+    id: 1,
+    slug: "ai",
+    title: "Artificial Intelligence",
+    description: "Learn AI from scratch with real-world projects and hands-on implementation.",
+    price: 1000,
+    icon: "AI",
+    syllabus: [
+      "Introduction to AI",
+      "Search Algorithms",
+      "Knowledge Representation",
+      "AI in Real World",
+      "Mini Project",
+    ],
+  },
+  {
+    id: 2,
+    slug: "python",
+    title: "Python Mastery",
+    description: "Become a Python pro with practical coding, automation, and backend skills.",
+    price: 2999,
+    icon: "Py",
+    syllabus: [
+      "Python Basics",
+      "Data Structures",
+      "File Handling",
+      "OOP in Python",
+      "Automation Project",
+    ],
+  },
+  {
+    id: 3,
+    slug: "ml",
+    title: "Machine Learning",
+    description: "Master ML algorithms and build predictive models with real datasets.",
+    price: 5999,
+    icon: "ML",
+    syllabus: [
+      "Intro to ML",
+      "Supervised Learning",
+      "Unsupervised Learning",
+      "Model Evaluation",
+      "ML Project",
+    ],
+  },
+];
