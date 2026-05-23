@@ -6,6 +6,7 @@ import Link from "next/link";
 import { courses } from "@/data/courses";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Navbar } from "../components/Navbar";
 
 function WelcomePopup() {
   const [show, setShow] = useState(false);
@@ -137,6 +138,7 @@ export default function Home() {
   };
 
   const services = [
+    { title: "Political Strategy Management", icon: "🗳️", color: "from-rose-500 to-red-500" },
     { title: "Technical Seminar", icon: "🎤", color: "from-blue-500 to-cyan-400" },
     { title: "AI Driven Software Solutions", icon: "🧠", color: "from-purple-500 to-indigo-400" },
     { title: "Website Development Full Stack", icon: "💻", color: "from-emerald-500 to-teal-400" },
@@ -159,44 +161,7 @@ export default function Home() {
         <div className={`absolute top-20 w-[600px] h-[400px] blur-[100px] rounded-full mix-blend-screen opacity-40 ${theme === "dark" ? "bg-cyan-900/30" : "bg-cyan-400/20"}`}></div>
       </div>
 
-      <nav className={`relative z-50 flex items-center justify-between px-6 py-4 mx-auto max-w-7xl border-b mt-2 rounded-2xl backdrop-blur-xl transition-colors duration-500 ${theme === "dark" ? "border-white/10 bg-white/[0.03]" : "border-black/5 bg-white shadow-sm"}`}>
-        <div className="flex items-center gap-3">
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xl shadow-[0_0_15px_rgba(255,255,255,0.4)] ${theme === "dark" ? "bg-gradient-to-br from-white to-fuchsia-400 text-black" : "bg-gradient-to-br from-white to-purple-600 text-black border border-gray-200"}`}
-          >
-            G
-          </motion.div>
-          <motion.span 
-            animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            style={{ textShadow: theme === "dark" ? "0 0 20px rgba(255,255,255,0.3)" : "none" }}
-            className={`text-xl font-extrabold tracking-tight cursor-pointer bg-[length:200%_auto] text-transparent bg-clip-text ${theme === "dark" ? "bg-gradient-to-r from-white via-fuchsia-300 to-purple-500" : "bg-gradient-to-r from-purple-700 via-fuchsia-600 to-purple-800"}`}
-          >
-            Getsetai Innovations
-          </motion.span>
-        </div>
-
-        <div className={`hidden md:flex items-center gap-8 text-sm font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-          <Link href="#features" className={`transition ${theme === "dark" ? "hover:text-white" : "hover:text-black"}`}>Features</Link>
-          <Link href="#services" className={`transition ${theme === "dark" ? "hover:text-white" : "hover:text-black"}`}>Services</Link>
-          <Link href="/careers" className={`transition ${theme === "dark" ? "hover:text-white" : "hover:text-black"}`}>Careers</Link>
-          <Link href="#courses" className={`transition ${theme === "dark" ? "hover:text-white" : "hover:text-black"}`}>Courses</Link>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className={`p-2 rounded-full transition-colors ${theme === "dark" ? "bg-white/10 hover:bg-white/20 text-white" : "bg-black/5 hover:bg-black/10 text-black"}`}>
-            {theme === "dark" ? "☀️" : "🌙"}
-          </button>
-          <Link href="/auth?mode=login" className={`text-sm font-medium transition ${theme === "dark" ? "text-gray-300 hover:text-white" : "text-gray-700 hover:text-black"}`}>
-            Sign In
-          </Link>
-          <Link href="/auth?mode=signup" className={`px-4 py-2 text-sm font-medium rounded-[10px] transition flex items-center gap-2 ${theme === "dark" ? "bg-white text-black hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.3)]" : "bg-black text-white hover:bg-gray-800 shadow-[0_4px_14px_0_rgba(0,0,0,0.15)]"}`}>
-            Get Started <span className="text-amber-500">⚡</span>
-          </Link>
-        </div>
-      </nav>
+      <Navbar theme={theme} setTheme={setTheme} activePage="home" />
 
       <main className="relative z-10 flex flex-col items-center justify-center pt-32 pb-20 px-6 text-center max-w-5xl mx-auto">
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col items-center w-full relative">
@@ -234,7 +199,7 @@ export default function Home() {
           </motion.h1>
 
           <motion.p variants={fadeInUp} className={`text-lg md:text-xl mb-10 max-w-2xl text-center leading-relaxed ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-            Empowering your business with Getsetai Innovations. From AI-driven software to full-stack development, we deliver excellence in every pixel and byte.
+            Empowering businesses across India. Getsetai Innovations delivers AI-driven software, full-stack development, and enterprise solutions to clients throughout India.
           </motion.p>
 
           <motion.div variants={fadeInUp}>
@@ -345,6 +310,234 @@ export default function Home() {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* Premium Interactive Contact Section */}
+      <section id="contact" className="relative z-10 max-w-6xl mx-auto px-6 py-24 mt-10">
+        <motion.div
+           initial={{ opacity: 0, y: 40 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: true }}
+           transition={{ duration: 0.8 }}
+        >
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Connect With Us</h2>
+            <p className={`max-w-2xl mx-auto text-lg ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+              Reach out to our core team for AI integrations, software solutions, robotics partnerships, or political strategy campaigns.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-10">
+            {/* Left: Contact Info details Cards */}
+            <div className="space-y-6 flex flex-col justify-between">
+              <div className="space-y-6">
+                {/* Email Info Card */}
+                <motion.div 
+                  whileHover={{ y: -5, scale: 1.01 }}
+                  className={`p-6 rounded-2xl border transition-all ${
+                    theme === "dark" 
+                      ? "bg-white/[0.02] border-white/10 hover:border-purple-500/30" 
+                      : "bg-white border-black/5 shadow-sm hover:shadow-md"
+                  }`}
+                >
+                  <h3 className="text-fuchsia-400 font-bold mb-2 uppercase tracking-wider text-xs flex items-center gap-2">
+                    ✉️ Communications
+                  </h3>
+                  <a href="mailto:innovationsgetsetai@gmail.com" className={`text-lg font-semibold transition hover:text-fuchsia-400 ${
+                    theme === "dark" ? "text-white" : "text-gray-900"
+                  }`}>
+                    innovationsgetsetai@gmail.com
+                  </a>
+                </motion.div>
+
+                {/* Phone Info Card */}
+                <motion.div 
+                  whileHover={{ y: -5, scale: 1.01 }}
+                  className={`p-6 rounded-2xl border transition-all ${
+                    theme === "dark" 
+                      ? "bg-white/[0.02] border-white/10 hover:border-amber-500/30" 
+                      : "bg-white border-black/5 shadow-sm hover:shadow-md"
+                  }`}
+                >
+                  <h3 className="text-amber-500 font-bold mb-2 uppercase tracking-wider text-xs flex items-center gap-2">
+                    📞 Direct Hotline
+                  </h3>
+                  <a href="tel:+919202893485" className={`text-2xl font-black transition hover:text-amber-500 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500 ${
+                    theme === "dark" ? "" : ""
+                  }`}>
+                    +91 92028 93485
+                  </a>
+                  <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+                    Available Mon - Sat, 10:00 AM - 7:00 PM (IST)
+                  </p>
+                </motion.div>
+
+                {/* HQ & Branches info */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {/* HQ Card - Bhilai */}
+                  <motion.div
+                    whileHover={{ y: -3, scale: 1.02 }}
+                    className={`p-5 rounded-2xl border relative overflow-hidden transition-all ${
+                      theme === "dark"
+                        ? "bg-gradient-to-br from-cyan-950/30 to-blue-950/20 border-cyan-500/20 hover:border-cyan-400/40"
+                        : "bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200 hover:border-blue-300"
+                    }`}
+                  >
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-base">🏢</span>
+                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full ${
+                        theme === "dark"
+                          ? "bg-cyan-500/15 text-cyan-400 border border-cyan-500/30"
+                          : "bg-blue-100 text-blue-700 border border-blue-200"
+                      }`}>
+                        HQ · Innovation Center
+                      </span>
+                    </div>
+                    <p className={`text-sm font-semibold leading-snug ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}>
+                      Vivekananda Nagar, Kohka
+                    </p>
+                    <p className={`text-xs mt-0.5 ${
+                      theme === "dark" ? "text-cyan-300/70" : "text-blue-600"
+                    }`}>
+                      Bhilai Nagar, Chhattisgarh 490023
+                    </p>
+                  </motion.div>
+
+                  {/* Cloud HQ Card - Bengaluru */}
+                  <motion.div
+                    whileHover={{ y: -3, scale: 1.02 }}
+                    className={`p-5 rounded-2xl border relative overflow-hidden transition-all ${
+                      theme === "dark"
+                        ? "bg-gradient-to-br from-purple-950/30 to-indigo-950/20 border-purple-500/20 hover:border-purple-400/40"
+                        : "bg-gradient-to-br from-purple-50 to-indigo-50 border-purple-200 hover:border-purple-300"
+                    }`}
+                  >
+                    <div className="absolute top-0 right-0 w-16 h-16 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-base">☁️</span>
+                      <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full ${
+                        theme === "dark"
+                          ? "bg-purple-500/15 text-purple-400 border border-purple-500/30"
+                          : "bg-purple-100 text-purple-700 border border-purple-200"
+                      }`}>
+                        Cloud HQ
+                      </span>
+                    </div>
+                    <p className={`text-sm font-semibold leading-snug ${
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }`}>
+                      Kodigehalli Ayappa Nagar
+                    </p>
+                    <p className={`text-xs mt-0.5 ${
+                      theme === "dark" ? "text-purple-300/70" : "text-purple-600"
+                    }`}>
+                      Bengaluru, Karnataka 560067
+                    </p>
+                  </motion.div>
+                </div>
+              </div>
+
+              {/* Map/Google maps trigger */}
+              <motion.div 
+                whileHover={{ scale: 1.01 }}
+                className={`p-5 rounded-2xl border text-center relative overflow-hidden group ${
+                  theme === "dark" 
+                    ? "bg-purple-950/10 border-purple-500/20 hover:border-purple-500/40" 
+                    : "bg-purple-50 border-purple-100 hover:border-purple-200"
+                }`}
+              >
+                <Link href="https://maps.app.goo.gl/7NP9c4NnN3iMCWH99" target="_blank" className="absolute inset-0 z-20" />
+                <span className="text-xl mb-1 block">🗺️</span>
+                <span className={`font-bold text-sm ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                  Find Us on Google Maps
+                </span>
+                <span className="text-xs text-purple-400 block mt-0.5 group-hover:translate-x-1 transition-transform">
+                  Get directions →
+                </span>
+              </motion.div>
+            </div>
+
+            {/* Right: Modern glass form */}
+            <div className={`p-8 rounded-2xl border backdrop-blur-md relative overflow-hidden ${
+              theme === "dark" 
+                ? "bg-white/[0.02] border-white/10" 
+                : "bg-white border-black/5 shadow-xl shadow-gray-200/50"
+            }`}>
+              <div className="absolute -right-20 -top-20 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+              
+              <h3 className={`text-xl font-bold mb-6 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                Drop Us a Message
+              </h3>
+
+              <form onSubmit={(e) => { e.preventDefault(); alert("Thank you! Our core team will connect with you shortly."); }} className="space-y-4">
+                <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                    Full Name
+                  </label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="Enter your name"
+                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
+                      theme === "dark" 
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500/20" 
+                        : "bg-gray-50 border-black/10 text-gray-900 placeholder-gray-400 focus:border-purple-600 focus:ring-purple-600/25"
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                    Email Address
+                  </label>
+                  <input 
+                    type="email" 
+                    required
+                    placeholder="name@company.com"
+                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 ${
+                      theme === "dark" 
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500/20" 
+                        : "bg-gray-50 border-black/10 text-gray-900 placeholder-gray-400 focus:border-purple-600 focus:ring-purple-600/25"
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label className={`block text-xs font-semibold uppercase tracking-wider mb-2 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                    Your Message
+                  </label>
+                  <textarea 
+                    rows={4}
+                    required
+                    placeholder="Tell us about your project, target audience, or strategy goals..."
+                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 resize-none ${
+                      theme === "dark" 
+                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-purple-500/20" 
+                        : "bg-gray-50 border-black/10 text-gray-900 placeholder-gray-400 focus:border-purple-600 focus:ring-purple-600/25"
+                    }`}
+                  />
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  className={`w-full py-3.5 font-semibold rounded-xl text-sm transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    theme === "dark" 
+                      ? "bg-white text-black hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.15)]" 
+                      : "bg-black text-white hover:bg-gray-800"
+                  }`}
+                >
+                  <span>Send Message</span>
+                  <span>🚀</span>
+                </motion.button>
+              </form>
+            </div>
           </div>
         </motion.div>
       </section>

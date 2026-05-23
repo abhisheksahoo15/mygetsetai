@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Navbar } from "../../components/Navbar";
 
 export default function CareersPage() {
   const [theme, setTheme] = useState("dark");
@@ -36,7 +37,7 @@ export default function CareersPage() {
     { title: "Full stack web Developer", type: "Full-Time", location: "Remote", color: "from-orange-500 to-amber-400" }
   ];
 
-  const applyLink = "https://docs.google.com/forms/d/e/1FAIpQLSc1xnNuSoMs5SOgYEWmLWwLOg6gCx0v2lAwBR21kLXObuOLHg/viewform?usp=dialog";
+  const applyLink = "https://forms.gle/jY6U79KkcWjd1HbB9";
 
   return (
     <div className={`relative min-h-screen transition-colors duration-500 overflow-hidden font-sans ${theme === "dark" ? "bg-[#020305] text-white selection:bg-purple-500/30" : "bg-gray-50 text-gray-900 selection:bg-purple-500/30"}`}>
@@ -49,44 +50,7 @@ export default function CareersPage() {
         <div className={`w-[800px] h-[500px] blur-[120px] rounded-full mix-blend-screen opacity-50 animate-pulse-slow ${theme === "dark" ? "bg-purple-900/20" : "bg-purple-400/20"}`}></div>
       </div>
 
-      <nav className={`relative z-50 flex items-center justify-between px-6 py-4 mx-auto max-w-7xl border-b mt-2 rounded-2xl backdrop-blur-md transition-colors duration-500 ${theme === "dark" ? "border-white/5 bg-white/[0.02]" : "border-black/5 bg-black/[0.02] shadow-sm"}`}>
-        <Link href="/" className="flex items-center gap-3 group">
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xl shadow-[0_0_15px_rgba(255,255,255,0.4)] ${theme === "dark" ? "bg-gradient-to-br from-white to-fuchsia-400 text-black" : "bg-gradient-to-br from-white to-purple-600 text-black border border-gray-200"}`}
-          >
-            G
-          </motion.div>
-          <motion.span 
-            animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            style={{ textShadow: theme === "dark" ? "0 0 20px rgba(255,255,255,0.3)" : "none" }}
-            className={`text-xl font-extrabold tracking-tight cursor-pointer bg-[length:200%_auto] text-transparent bg-clip-text ${theme === "dark" ? "bg-gradient-to-r from-white via-fuchsia-300 to-purple-500" : "bg-gradient-to-r from-purple-700 via-fuchsia-600 to-purple-800"}`}
-          >
-            Getsetai Innovations
-          </motion.span>
-        </Link>
-
-        <div className={`hidden md:flex items-center gap-8 text-sm font-medium ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-          <Link href="/#features" className={`transition ${theme === "dark" ? "hover:text-white" : "hover:text-black"}`}>Features</Link>
-          <Link href="/#services" className={`transition ${theme === "dark" ? "hover:text-white" : "hover:text-black"}`}>Services</Link>
-          <span className={`transition ${theme === "dark" ? "text-white" : "text-black"}`}>Careers</span>
-          <Link href="/#courses" className={`transition ${theme === "dark" ? "hover:text-white" : "hover:text-black"}`}>Courses</Link>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className={`p-2 rounded-full transition-colors ${theme === "dark" ? "bg-white/10 hover:bg-white/20 text-white" : "bg-black/5 hover:bg-black/10 text-black"}`}>
-            {theme === "dark" ? "☀️" : "🌙"}
-          </button>
-          <Link href="/auth?mode=login" className={`text-sm font-medium transition ${theme === "dark" ? "text-gray-300 hover:text-white" : "text-gray-700 hover:text-black"}`}>
-            Sign In
-          </Link>
-          <Link href="/auth?mode=signup" className={`px-4 py-2 text-sm font-medium rounded-[10px] transition flex items-center gap-2 ${theme === "dark" ? "bg-white text-black hover:bg-gray-100 shadow-[0_0_20px_rgba(255,255,255,0.3)]" : "bg-black text-white hover:bg-gray-800 shadow-[0_4px_14px_0_rgba(0,0,0,0.15)]"}`}>
-            Get Started <span className="text-amber-500">⚡</span>
-          </Link>
-        </div>
-      </nav>
+      <Navbar theme={theme} setTheme={setTheme} activePage="careers" />
 
       <main className="relative z-10 flex flex-col items-center justify-center pt-32 pb-20 px-6 text-center max-w-5xl mx-auto">
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="flex flex-col items-center w-full">
@@ -123,6 +87,33 @@ export default function CareersPage() {
            transition={{ duration: 0.8, delay: 0.3 }}
            className="w-full max-w-3xl flex flex-col gap-4 mt-8"
         >
+          {/* Animated CTA to improve careers form visibility */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-6"
+          >
+            <div className="rounded-2xl p-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-indigo-500 shadow-lg">
+              <div className="flex items-center justify-between gap-4 rounded-xl bg-[#05050a] p-4">
+                <div>
+                  <h4 className="text-lg font-bold">We're hiring — Join Getsetai</h4>
+                  <p className="text-sm text-gray-300">Fast-track your career: internships, dev roles, and remote positions.</p>
+                </div>
+                <motion.a
+                  href={applyLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="group inline-flex items-center gap-3 rounded-lg bg-gradient-to-r from-amber-400 to-yellow-300 px-5 py-3 font-semibold text-black hover:shadow-2xl"
+                >
+                  <motion.span animate={{ x: [0, 6, 0] }} transition={{ duration: 1.2, repeat: Infinity }} className="text-xl">✦</motion.span>
+                  Apply via Form
+                </motion.a>
+              </div>
+            </div>
+          </motion.div>
           {jobs.map((job, idx) => (
             <Link href={applyLink} target="_blank" key={idx} className="block">
               <motion.div 
