@@ -5,6 +5,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { getSupabaseBrowserClient } from "../lib/supabase";
 
 interface NavbarProps {
   theme: string;
@@ -12,10 +13,28 @@ interface NavbarProps {
   activePage?: string;
 }
 
+function formatUserName(user: any) {
+  if (!user) return "Innovator";
+  const fullName = user.user_metadata?.full_name;
+  if (fullName && fullName.trim()) {
+    return fullName.split(" ").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+  }
+  
+  const emailName = user.email?.split("@")[0] || "Innovator";
+  const cleanName = emailName.replace(/[0-9]+/g, "").replace(/[._-]/g, " ");
+  return cleanName.split(" ").filter(Boolean).map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+}
+
 export function Navbar({ theme, setTheme, activePage = "home" }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
+
+  // Load session from Supabase
+  const [user, setUser] = useState<any>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeName, setWelcomeName] = useState("");
+  const [welcomeShown, setWelcomeShown] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,12 +59,66 @@ export function Navbar({ theme, setTheme, activePage = "home" }: NavbarProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Supabase Auth Integration
+  useEffect(() => {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      
+      // Load initial session
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        const sessionUser = session?.user ?? null;
+        setUser(sessionUser);
+        if (sessionUser && !welcomeShown) {
+          const name = formatUserName(sessionUser);
+          setWelcomeName(name);
+          setShowWelcome(true);
+          setWelcomeShown(true);
+          setTimeout(() => setShowWelcome(false), 4500);
+        }
+      });
+
+      // Listen for auth state changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        const sessionUser = session?.user ?? null;
+        setUser(sessionUser);
+        
+        if ((event === "SIGNED_IN" || event === "USER_UPDATED") && sessionUser) {
+          const name = formatUserName(sessionUser);
+          setWelcomeName(name);
+          setShowWelcome(true);
+          setWelcomeShown(true);
+          setTimeout(() => setShowWelcome(false), 4500);
+        } else if (event === "SIGNED_OUT") {
+          setUser(null);
+          setWelcomeShown(false);
+        }
+      });
+
+      return () => {
+        subscription?.unsubscribe();
+      };
+    } catch (e) {
+      console.warn("Supabase auth not initialized in Navbar:", e);
+    }
+  }, [welcomeShown]);
+
+  const handleSignOut = async () => {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      await supabase.auth.signOut();
+      setUser(null);
+      window.location.href = "/";
+    } catch (e) {
+      console.error("Sign out failed:", e);
+    }
+  };
+
   // Navigation Links - "Features" removed as requested
   const navLinks = [
     { label: "Services", href: "/#services" },
     { label: "Careers", href: "/careers", key: "careers" },
     { label: "Courses", href: "/#courses" },
-    { label: "Contact", href: "/#contact" },
+    { label: "Contact", href: "/contact" },
   ];
 
   // Hamburger lines wing-flap hover variant
@@ -144,7 +217,12 @@ export function Navbar({ theme, setTheme, activePage = "home" }: NavbarProps) {
           <div className="hidden lg:flex items-center gap-1 text-sm font-semibold mx-auto">
             {navLinks.map((link, idx) => {
               const isCareers = link.key === "careers";
-              const isActive = isCareers ? activePage === "careers" : activePage === "home" && link.label !== "Careers";
+              const isContact = link.label === "Contact";
+              const isActive = isCareers 
+                ? activePage === "careers" 
+                : isContact
+                  ? activePage === "contact"
+                  : activePage === "home" && link.label !== "Careers" && link.label !== "Contact";
               
               return (
                 <Link
@@ -159,7 +237,7 @@ export function Navbar({ theme, setTheme, activePage = "home" }: NavbarProps) {
                         : "text-purple-600 font-bold"
                       : theme === "dark" 
                         ? "text-zinc-400 hover:text-white" 
-                        : "text-zinc-600 hover:text-black"
+                        : "text-zinc-650 hover:text-black"
                   }`}
                 >
                   <span className="relative z-10">{link.label}</span>
@@ -204,34 +282,59 @@ export function Navbar({ theme, setTheme, activePage = "home" }: NavbarProps) {
               </motion.div>
             </motion.button>
 
-            {/* Sign In Link - Compact */}
-            <Link
-              href="/auth?mode=login"
-              className={`text-xs font-bold uppercase tracking-wider px-2 py-2 transition-all duration-300 hover:scale-102 ${
-                theme === "dark" ? "text-zinc-300 hover:text-white" : "text-zinc-600 hover:text-black"
-              }`}
-            >
-              Sign In
-            </Link>
+            {user ? (
+              // Authenticated User Controls
+              <div className="flex items-center gap-4">
+                <span className={`text-xs font-black tracking-tight px-3.5 py-2 rounded-xl border ${
+                  theme === "dark" 
+                    ? "bg-cyan-950/20 text-cyan-400 border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]" 
+                    : "bg-purple-50 text-purple-700 border-purple-200"
+                }`}>
+                  Hii, {formatUserName(user)} 👋
+                </span>
+                
+                <button
+                  onClick={handleSignOut}
+                  className={`text-xs font-bold uppercase tracking-wider px-3.5 py-2.5 rounded-xl transition-all duration-300 hover:scale-103 active:scale-98 border ${
+                    theme === "dark" 
+                      ? "border-red-500/20 hover:border-red-500/40 bg-red-500/5 text-red-400 hover:bg-red-500/10" 
+                      : "border-red-200 hover:border-red-300 bg-red-50 text-red-700 hover:bg-red-100"
+                  }`}
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              // Anonymous / Guest Controls
+              <>
+                <Link
+                  href="/auth?mode=login"
+                  className={`text-xs font-bold uppercase tracking-wider px-2 py-2 transition-all duration-300 hover:scale-102 ${
+                    theme === "dark" ? "text-zinc-300 hover:text-white" : "text-zinc-650 hover:text-black"
+                  }`}
+                >
+                  Sign In
+                </Link>
 
-            {/* Get Started - High-End Premium Button with Neon Gradient Outline */}
-            <Link
-              href="/auth?mode=signup"
-              className={`relative overflow-hidden px-4.5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-300 hover:scale-105 active:scale-98 flex items-center gap-1.5 group ${
-                theme === "dark"
-                  ? "bg-white text-black hover:shadow-[0_0_20px_rgba(0,229,255,0.4)]"
-                  : "bg-black text-white hover:bg-zinc-800 shadow-sm"
-              }`}
-            >
-              <span>Get Started</span>
-              <motion.span
-                animate={{ y: [0, -1, 1, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                className="text-amber-500 text-[10px]"
-              >
-                ⚡
-              </motion.span>
-            </Link>
+                <Link
+                  href="/auth?mode=signup"
+                  className={`relative overflow-hidden px-4.5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-300 hover:scale-105 active:scale-98 flex items-center gap-1.5 group ${
+                    theme === "dark"
+                      ? "bg-white text-black hover:shadow-[0_0_20px_rgba(0,229,255,0.4)]"
+                      : "bg-black text-white hover:bg-zinc-800 shadow-sm"
+                  }`}
+                >
+                  <span>Get Started</span>
+                  <motion.span
+                    animate={{ y: [0, -1, 1, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                    className="text-amber-500 text-[10px]"
+                  >
+                    ⚡
+                  </motion.span>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Tablet & Mobile Controls (Theme Toggle + Hummingbird Hamburger Menu) */}
@@ -356,7 +459,7 @@ export function Navbar({ theme, setTheme, activePage = "home" }: NavbarProps) {
                     className={`text-2xl font-bold flex items-center justify-between border-b pb-3 group ${
                       theme === "dark" 
                         ? "border-white/5 text-gray-200 hover:text-white" 
-                        : "border-black/5 text-gray-800 hover:text-black"
+                        : "border-black/5 text-gray-850 hover:text-black"
                     }`}
                   >
                     <span>{link.label}</span>
@@ -378,28 +481,96 @@ export function Navbar({ theme, setTheme, activePage = "home" }: NavbarProps) {
               transition={{ delay: 0.4, type: "spring", stiffness: 100 }}
               className="flex flex-col gap-4 w-full relative z-10"
             >
-              <Link
-                href="/auth?mode=login"
-                onClick={() => setIsOpen(false)}
-                className={`w-full py-3.5 text-center font-bold rounded-xl border transition-all duration-300 active:scale-98 ${
-                  theme === "dark"
-                    ? "border-white/10 bg-white/5 hover:bg-white/10 text-white"
-                    : "border-black/10 bg-black/5 hover:bg-black/10 text-black"
-                }`}
-              >
-                Sign In
-              </Link>
-              
-              <Link
-                href="/auth?mode=signup"
-                onClick={() => setIsOpen(false)}
-                className="w-full py-4 text-center font-bold rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white shadow-lg shadow-cyan-500/25 transition-all duration-300 hover:opacity-95 active:scale-98 flex items-center justify-center gap-2"
-              >
-                <span>Get Started</span>
-                <span className="text-amber-300">⚡</span>
-              </Link>
+              {user ? (
+                // Authenticated Mobile view
+                <div className="flex flex-col gap-3 w-full">
+                  <div className={`w-full py-4 text-center font-bold rounded-xl border ${
+                    theme === "dark" 
+                      ? "bg-cyan-950/20 text-cyan-400 border-cyan-500/20" 
+                      : "bg-purple-50 text-purple-700 border-purple-200"
+                  }`}>
+                    Hii, {formatUserName(user)} 👋
+                  </div>
+                  
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleSignOut();
+                    }}
+                    className={`w-full py-3.5 text-center font-bold rounded-xl border transition-all duration-300 active:scale-98 ${
+                      theme === "dark"
+                        ? "border-red-500/20 bg-red-500/5 text-red-400 hover:bg-red-500/10"
+                        : "border-red-200 bg-red-50 text-red-700 hover:bg-red-105"
+                    }`}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                // Guest Mobile view
+                <>
+                  <Link
+                    href="/auth?mode=login"
+                    onClick={() => setIsOpen(false)}
+                    className={`w-full py-3.5 text-center font-bold rounded-xl border transition-all duration-300 active:scale-98 ${
+                      theme === "dark"
+                        ? "border-white/10 bg-white/5 hover:bg-white/10 text-white"
+                        : "border-black/10 bg-black/5 hover:bg-black/10 text-black"
+                    }`}
+                  >
+                    Sign In
+                  </Link>
+                  
+                  <Link
+                    href="/auth?mode=signup"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full py-4 text-center font-bold rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white shadow-lg shadow-cyan-500/25 transition-all duration-300 hover:opacity-95 active:scale-98 flex items-center justify-center gap-2"
+                  >
+                    <span>Get Started</span>
+                    <span className="text-amber-300">⚡</span>
+                  </Link>
+                </>
+              )}
             </motion.div>
 
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Dynamic Welcoming Terminal Pop-up */}
+      <AnimatePresence>
+        {showWelcome && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className={`fixed bottom-6 right-6 z-[100] max-w-sm w-full p-5 rounded-2xl border backdrop-blur-xl shadow-2xl flex items-start gap-4 ${
+              theme === "dark" 
+                ? "border-cyan-500/30 bg-[#020305]/95 text-white shadow-cyan-500/5" 
+                : "border-purple-200 bg-white/95 text-gray-900 shadow-purple-500/5"
+            }`}
+          >
+            {/* Pulsing neon core indicator */}
+            <div className="relative w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-gradient-to-tr from-cyan-400 to-purple-500 text-white font-black text-lg shadow-lg">
+              <span>✦</span>
+            </div>
+            
+            <div className="flex-1 text-left">
+              <h4 className="text-sm font-black tracking-tight mb-0.5">
+                Terminal Access Granted
+              </h4>
+              <p className={`text-xs leading-relaxed ${theme === "dark" ? "text-zinc-300" : "text-zinc-650"}`}>
+                Welcome back, <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400">{welcomeName}</span>! Secure session initialized. 🚀
+              </p>
+            </div>
+
+            <button 
+              onClick={() => setShowWelcome(false)}
+              className={`text-sm ${theme === "dark" ? "text-zinc-500 hover:text-white" : "text-zinc-400 hover:text-black"}`}
+            >
+              ✕
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

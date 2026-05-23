@@ -11,7 +11,7 @@ type AuthMode = "login" | "signup";
 
 function cleanRedirect(value: string | null) {
   if (!value || !value.startsWith("/") || value.startsWith("//")) {
-    return "/checkout/ai";
+    return "/";
   }
   return value;
 }
